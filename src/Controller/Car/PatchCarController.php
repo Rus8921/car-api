@@ -21,8 +21,10 @@ class PatchCarController extends AbstractController
     }
     public function __invoke(Request $request,Car $car): Response
     {
+        //  собираю данные об объекте по id
         $cardata = $this->entityManager->getRepository(Car::class)->findOneBy(['id'=>$car->getId()]);
 
+        // ввожу условный оператор, если данные задаются в свагере, то они будут заменены
         if (isset($cardata->type)) {
             $cardata->setType($cardata->type);
         }
