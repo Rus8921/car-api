@@ -19,20 +19,25 @@ class PatchCarController extends AbstractController
     {
 
     }
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request,Car $car): Response
     {
+        $cardata = $this->entityManager->getRepository(Car::class)->findOneBy(['id'=>$car->getId()]);
 
-        // действительно забавно что Put  и Patch тут работает схоже, если я не заполню данные, то он их и не изменит
-        $data = json_decode($request->getContent());
+        if (isset($cardata->type)) {
+            $cardata->setType($cardata->type);
+        }
 
-        $car = new Car();
-        $car->setType($data->type);
-        $car->setMark($data->mark);
-        $car->setYear($data->year);
+        if (isset($cardata->mark)) {
+            $cardata->setMark($cardata->mark);
+        }
+        if (isset($cardata->year)) {
+            $cardata->setYear($cardata->year);
+        }
 
-        $this->entityManager->persist($car);
+        $this->entityManager->persist($cardata);
         $this->entityManager->flush();
 
         return new JsonResponse('Car changed successfully',Response::HTTP_CREATED);
     }
 }
+

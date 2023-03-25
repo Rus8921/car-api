@@ -19,17 +19,17 @@ class PutCarController extends AbstractController
     {
 
     }
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request,Car $car): Response
     {
         $data = json_decode($request->getContent());
 
         // по сути происходит все 1 в 1 из Post, просто я указываю id в api_platform и он перезаписывает данные по этому id
-        $car = new Car();
-        $car->setType($data->type);
-        $car->setMark($data->mark);
-        $car->setYear($data->year);
+        $cardata = $this->entityManager->getRepository(Car::class)->findOneBy(['id'=>$car->getId()]);
+        $cardata->setType($data->type);
+        $cardata->setMark($data->mark);
+        $cardata->setYear($data->year);
 
-        $this->entityManager->persist($car);
+        $this->entityManager->persist($cardata);
         $this->entityManager->flush();
 
         return new JsonResponse('Car changed successfully',Response::HTTP_CREATED);
